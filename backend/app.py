@@ -1,3 +1,4 @@
+from backtest.performance import *
 import pandas as pd
 from data.data_cleaning import compute_log_returns
 from strategy.correlation import compute_cross_correlation, find_optimal_lag
@@ -115,9 +116,9 @@ def print_report(strategy_pnl, benchmark_pnl, final_pnl, trades):
 
     print("\n================ MODEL METRICS =================\n")
 
-    print(f"{'Accuracy':25} {'N/A':>12} {accuracy(trades):>12.4f} {accuracy(trades):>12.4f}")
-    print(f"{'Precision':25} {'N/A':>12} {precision(trades):>12.4f} {precision(trades):>12.4f}")
     print(f"{'Average Holding Period':25} {'N/A':>12} {average_holding_period(trades):>12.2f} {average_holding_period(trades):>12.2f}")
+    
+    print(f"{'Profit Factor':25} {profit_factor(benchmark_pnl):>12.4f} {profit_factor(strategy_pnl):>12.4f} {profit_factor(final_pnl):>12.4f}")
 
 if __name__ == "__main__":
     main()
