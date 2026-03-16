@@ -9,7 +9,7 @@ def run_granger_test(data, max_lag, verbose=False):
     column2 = leader returns
     """
 
-    results = grangercausalitytests(data, max_lag, verbose=verbose)
+    results = grangercausalitytests(data, max_lag, verbose=False)
 
     p_values = {}
 
