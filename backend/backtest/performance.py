@@ -6,19 +6,17 @@ def calculate_win_rate(pnl_list):
     wins = [p for p in pnl_list if p > 0]
     return len(wins) / len(pnl_list) if pnl_list else 0
 
+def sortino_ratio(returns, risk_free=0):
+    excess_returns = returns - risk_free
 
-def calculate_sortino_ratio(returns):
-
-    returns = np.array(returns)
-
-    downside = np.minimum(0, returns)
-
+    downside = excess_returns[excess_returns < 0]
     downside_dev = np.sqrt(np.mean(downside**2))
 
     if downside_dev == 0:
         return 0
 
-    return np.mean(returns) / downside_dev
+    sortino = np.mean(excess_returns) / downside_dev
+    return sortino
 
 
 def calculate_max_drawdown(returns):
