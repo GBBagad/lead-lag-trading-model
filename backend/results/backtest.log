@@ -1,0 +1,37 @@
+2026-03-17 20:44:04,709 - INFO - ===== PIPELINE START =====
+2026-03-17 20:44:04,709 - INFO - Feature Engineering: backend/data/data_cleaning.py
+2026-03-17 20:44:04,709 - INFO - Correlation: backend/strategy/correlation.py
+2026-03-17 20:44:04,709 - INFO - Granger Test: backend/strategy/granger.py
+2026-03-17 20:44:04,709 - INFO - Signal: backend/strategy/signal.py
+2026-03-17 20:44:04,710 - INFO - Backtest Engine: backend/backtest/engine.py
+2026-03-17 20:44:04,710 - INFO - Performance: backend/backtest/performance.py
+2026-03-17 20:46:19,237 - INFO - ===== PIPELINE START =====
+2026-03-17 20:46:19,238 - INFO - Feature Engineering: backend/data/data_cleaning.py
+2026-03-17 20:46:19,238 - INFO - Correlation: backend/strategy/correlation.py
+2026-03-17 20:46:19,239 - INFO - Granger Test: backend/strategy/granger.py
+2026-03-17 20:46:19,239 - INFO - Signal: backend/strategy/signal.py
+2026-03-17 20:46:19,240 - INFO - Backtest Engine: backend/backtest/engine.py
+2026-03-17 20:46:19,240 - INFO - Performance: backend/backtest/performance.py
+2026-03-17 20:46:19,549 - INFO - Total Trades: 9
+2026-03-17 20:46:19,550 - INFO - Sharpe Ratio: 2.505287142158771
+2026-03-17 20:46:19,551 - INFO - Sortino Ratio: 0.1937011298807292
+2026-03-17 20:50:38,730 - INFO - ===== PIPELINE START =====
+2026-03-17 20:50:38,730 - INFO - Feature Engineering: backend/data/data_cleaning.py
+2026-03-17 20:50:38,730 - INFO - Correlation: backend/strategy/correlation.py
+2026-03-17 20:50:38,730 - INFO - Granger Test: backend/strategy/granger.py
+2026-03-17 20:50:38,730 - INFO - Signal: backend/strategy/signal.py
+2026-03-17 20:50:38,731 - INFO - Backtest Engine: backend/backtest/engine.py
+2026-03-17 20:50:38,731 - INFO - Performance: backend/backtest/performance.py
+2026-03-17 20:50:39,143 - INFO - Total Trades: 9
+2026-03-17 20:50:39,144 - INFO - Sharpe Ratio: 2.505287142158771
+2026-03-17 20:50:39,145 - INFO - Sortino Ratio: 0.1937011298807292
+2026-03-17 20:51:00,042 - INFO - ===== PIPELINE START =====
+2026-03-17 20:51:00,042 - INFO - Feature Engineering: backend/data/data_cleaning.py
+2026-03-17 20:51:00,042 - INFO - Correlation: backend/strategy/correlation.py
+2026-03-17 20:51:00,042 - INFO - Granger Test: backend/strategy/granger.py
+2026-03-17 20:51:00,042 - INFO - Signal: backend/strategy/signal.py
+2026-03-17 20:51:00,042 - INFO - Backtest Engine: backend/backtest/engine.py
+2026-03-17 20:51:00,042 - INFO - Performance: backend/backtest/performance.py
+2026-03-17 20:51:00,176 - INFO - Total Trades: 9
+2026-03-17 20:51:00,177 - INFO - Sharpe Ratio: 2.505287142158771
+2026-03-17 20:51:00,177 - INFO - Sortino Ratio: 0.1937011298807292

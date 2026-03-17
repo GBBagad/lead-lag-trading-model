@@ -6,11 +6,63 @@ from strategy.granger import run_granger_test
 from strategy.validation import validate_lag
 from strategy.signal import generate_signals
 from backtest.engine import run_backtest
-from backtest.performance import *
 from strategy.parameters import *
+from backtest.performance import calculate_sharpe_ratio, calculate_sortino_ratio
+
+import warnings
+warnings.filterwarnings("ignore", category=FutureWarning)
+
+import logging
+import os
+
+# ensure results folder exists
+os.makedirs("results", exist_ok=True)
+
+logging.basicConfig(
+    filename='results/backtest.log',
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
 
 
+# ===========================
+# SAVE RESULTS FUNCTION
+# ===========================
+def save_results(benchmark, strategy, final):
+
+    min_len = min(len(benchmark), len(strategy), len(final))
+
+    benchmark = benchmark[:min_len]
+    strategy = strategy[:min_len]
+    final = final[:min_len]
+
+    df = pd.DataFrame({
+        "Benchmark": benchmark,
+        "Strategy": strategy,
+        "Final": final
+    })
+
+    df.to_csv("results/backtest_results.csv", index=False)
+
+def save_results(benchmark, strategy, final):
+
+    pd.DataFrame({"Benchmark": benchmark}).to_csv("results/benchmark.csv", index=False)
+    pd.DataFrame({"Strategy": strategy}).to_csv("results/strategy.csv", index=False)
+    pd.DataFrame({"Final": final}).to_csv("results/final.csv", index=False)
+# ===========================
+# MAIN PIPELINE
+# ===========================
 def main():
+
+    logging.info("Model Logic / Strategy: backend/strategy/signal.py")
+    logging.info("===== PIPELINE START =====")
+
+    logging.info("Feature Engineering: backend/data/data_cleaning.py")
+    logging.info("Correlation: backend/strategy/correlation.py")
+    logging.info("Granger Test: backend/strategy/granger.py")
+    logging.info("Signal: backend/strategy/signal.py")
+    logging.info("Backtest Engine: backend/backtest/engine.py")
+    logging.info("Performance: backend/backtest/performance.py")
 
     # STEP 1 : Load Data
     leader_df = pd.read_csv("data/leader_data.csv")
@@ -42,7 +94,7 @@ def main():
 
     pvals = run_granger_test(df, MAX_LAG)
 
-    # STEP 5 : Lag Validation
+    # STEP 5 : Validation
     is_valid = validate_lag(optimal_lag, corrs, pvals)
 
     if not is_valid:
@@ -68,22 +120,28 @@ def main():
     print("\nTotal Trades:", len(trades))
     print("Total Strategy PnL:", sum(strategy_pnl))
 
-    # Benchmark returns
+    # Benchmark
     benchmark_pnl = lagger_returns.dropna().tolist()
 
-    # Strategy before cost
+    # Strategy
     gross_pnl = [t["gross_pnl"] for t in trades]
-
-    # Final after cost
     final_pnl = [t["pnl"] for t in trades]
 
+    # REPORT
     print_report(gross_pnl, benchmark_pnl, final_pnl, trades)
 
+    # SAVE RESULTS
+    save_results(benchmark_pnl, strategy_pnl, final_pnl)
+
+    # LOG METRICS
+    logging.info(f"Total Trades: {len(trades)}")
+    logging.info(f"Sharpe Ratio: {calculate_sharpe_ratio(final_pnl)}")
+    logging.info(f"Sortino Ratio: {calculate_sortino_ratio(final_pnl)}")
+
 
 # ===========================
-# REPORT
+# REPORT FUNCTION
 # ===========================
-
 def print_report(strategy_pnl, benchmark_pnl, final_pnl, trades):
 
     print("\n================ RETURN METRICS ================\n")
@@ -117,8 +175,8 @@ def print_report(strategy_pnl, benchmark_pnl, final_pnl, trades):
     print("\n================ MODEL METRICS =================\n")
 
     print(f"{'Average Holding Period':25} {'N/A':>12} {average_holding_period(trades):>12.2f} {average_holding_period(trades):>12.2f}")
-    
     print(f"{'Profit Factor':25} {profit_factor(benchmark_pnl):>12.4f} {profit_factor(strategy_pnl):>12.4f} {profit_factor(final_pnl):>12.4f}")
+
 
 if __name__ == "__main__":
     main()
