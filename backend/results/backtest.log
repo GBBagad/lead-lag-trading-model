@@ -35,3 +35,87 @@
 2026-03-17 20:51:00,176 - INFO - Total Trades: 9
 2026-03-17 20:51:00,177 - INFO - Sharpe Ratio: 2.505287142158771
 2026-03-17 20:51:00,177 - INFO - Sortino Ratio: 0.1937011298807292
+2026-03-17 21:02:28,935 - INFO - Model Logic / Strategy: backend/strategy/signal.py
+2026-03-17 21:02:28,936 - INFO - ===== PIPELINE START =====
+2026-03-17 21:02:28,936 - INFO - Feature Engineering: backend/data/data_cleaning.py
+2026-03-17 21:02:28,936 - INFO - Correlation: backend/strategy/correlation.py
+2026-03-17 21:02:28,936 - INFO - Granger Test: backend/strategy/granger.py
+2026-03-17 21:02:28,936 - INFO - Signal: backend/strategy/signal.py
+2026-03-17 21:02:28,936 - INFO - Backtest Engine: backend/backtest/engine.py
+2026-03-17 21:02:28,936 - INFO - Performance: backend/backtest/performance.py
+2026-03-17 21:02:29,282 - INFO - Total Trades: 9
+2026-03-17 21:02:29,282 - INFO - Sharpe Ratio: 2.505287142158771
+2026-03-17 21:02:29,283 - INFO - Sortino Ratio: 0.1937011298807292
+2026-03-17 21:07:49,274 - INFO - Model Logic / Strategy: backend/strategy/signal.py
+2026-03-17 21:07:49,275 - INFO - ===== PIPELINE START =====
+2026-03-17 21:07:49,275 - INFO - Feature Engineering: backend/data/data_cleaning.py
+2026-03-17 21:07:49,275 - INFO - Correlation: backend/strategy/correlation.py
+2026-03-17 21:07:49,275 - INFO - Granger Test: backend/strategy/granger.py
+2026-03-17 21:07:49,275 - INFO - Signal: backend/strategy/signal.py
+2026-03-17 21:07:49,275 - INFO - Backtest Engine: backend/backtest/engine.py
+2026-03-17 21:07:49,275 - INFO - Performance: backend/backtest/performance.py
+2026-03-17 21:11:13,142 - INFO - Model Logic / Strategy: backend/strategy/signal.py
+2026-03-17 21:11:13,144 - INFO - ===== PIPELINE START =====
+2026-03-17 21:11:13,144 - INFO - Feature Engineering: backend/data/data_cleaning.py
+2026-03-17 21:11:13,144 - INFO - Correlation: backend/strategy/correlation.py
+2026-03-17 21:11:13,144 - INFO - Granger Test: backend/strategy/granger.py
+2026-03-17 21:11:13,144 - INFO - Signal: backend/strategy/signal.py
+2026-03-17 21:11:13,144 - INFO - Backtest Engine: backend/backtest/engine.py
+2026-03-17 21:11:13,144 - INFO - Performance: backend/backtest/performance.py
+2026-03-17 21:12:25,579 - INFO - Model Logic / Strategy: backend/strategy/signal.py
+2026-03-17 21:12:25,579 - INFO - ===== PIPELINE START =====
+2026-03-17 21:12:25,579 - INFO - Feature Engineering: backend/data/data_cleaning.py
+2026-03-17 21:12:25,579 - INFO - Correlation: backend/strategy/correlation.py
+2026-03-17 21:12:25,579 - INFO - Granger Test: backend/strategy/granger.py
+2026-03-17 21:12:25,579 - INFO - Signal: backend/strategy/signal.py
+2026-03-17 21:12:25,579 - INFO - Backtest Engine: backend/backtest/engine.py
+2026-03-17 21:12:25,579 - INFO - Performance: backend/backtest/performance.py
+2026-03-17 21:12:54,195 - INFO - Model Logic / Strategy: backend/strategy/signal.py
+2026-03-17 21:12:54,195 - INFO - ===== PIPELINE START =====
+2026-03-17 21:12:54,195 - INFO - Feature Engineering: backend/data/data_cleaning.py
+2026-03-17 21:12:54,195 - INFO - Correlation: backend/strategy/correlation.py
+2026-03-17 21:12:54,195 - INFO - Granger Test: backend/strategy/granger.py
+2026-03-17 21:12:54,195 - INFO - Signal: backend/strategy/signal.py
+2026-03-17 21:12:54,195 - INFO - Backtest Engine: backend/backtest/engine.py
+2026-03-17 21:12:54,195 - INFO - Performance: backend/backtest/performance.py
+2026-03-17 21:19:42,013 - INFO - Model Logic / Strategy: backend/strategy/signal.py
+2026-03-17 21:19:42,013 - INFO - ===== PIPELINE START =====
+2026-03-17 21:19:42,013 - INFO - Feature Engineering: backend/data/data_cleaning.py
+2026-03-17 21:19:42,013 - INFO - Correlation: backend/strategy/correlation.py
+2026-03-17 21:19:42,013 - INFO - Granger Test: backend/strategy/granger.py
+2026-03-17 21:19:42,014 - INFO - Signal: backend/strategy/signal.py
+2026-03-17 21:19:42,014 - INFO - Backtest Engine: backend/backtest/engine.py
+2026-03-17 21:19:42,014 - INFO - Performance: backend/backtest/performance.py
+2026-03-17 21:20:26,636 - INFO - Model Logic / Strategy: backend/strategy/signal.py
+2026-03-17 21:20:26,637 - INFO - ===== PIPELINE START =====
+2026-03-17 21:20:26,637 - INFO - Feature Engineering: backend/data/data_cleaning.py
+2026-03-17 21:20:26,637 - INFO - Correlation: backend/strategy/correlation.py
+2026-03-17 21:20:26,637 - INFO - Granger Test: backend/strategy/granger.py
+2026-03-17 21:20:26,637 - INFO - Signal: backend/strategy/signal.py
+2026-03-17 21:20:26,637 - INFO - Backtest Engine: backend/backtest/engine.py
+2026-03-17 21:20:26,637 - INFO - Performance: backend/backtest/performance.py
+2026-03-17 21:23:04,155 - INFO - Model Logic / Strategy: backend/strategy/signal.py
+2026-03-17 21:23:04,155 - INFO - ===== PIPELINE START =====
+2026-03-17 21:23:04,155 - INFO - Feature Engineering: backend/data/data_cleaning.py
+2026-03-17 21:23:04,155 - INFO - Correlation: backend/strategy/correlation.py
+2026-03-17 21:23:04,155 - INFO - Granger Test: backend/strategy/granger.py
+2026-03-17 21:23:04,155 - INFO - Signal: backend/strategy/signal.py
+2026-03-17 21:23:04,156 - INFO - Backtest Engine: backend/backtest/engine.py
+2026-03-17 21:23:04,156 - INFO - Performance: backend/backtest/performance.py
+2026-03-17 21:23:22,420 - INFO - Model Logic / Strategy: backend/strategy/signal.py
+2026-03-17 21:23:22,420 - INFO - ===== PIPELINE START =====
+2026-03-17 21:23:22,420 - INFO - Feature Engineering: backend/data/data_cleaning.py
+2026-03-17 21:23:22,420 - INFO - Correlation: backend/strategy/correlation.py
+2026-03-17 21:23:22,420 - INFO - Granger Test: backend/strategy/granger.py
+2026-03-17 21:23:22,420 - INFO - Signal: backend/strategy/signal.py
+2026-03-17 21:23:22,421 - INFO - Backtest Engine: backend/backtest/engine.py
+2026-03-17 21:23:22,421 - INFO - Performance: backend/backtest/performance.py
+2026-03-17 21:24:55,834 - INFO - Model Logic / Strategy: backend/strategy/signal.py
+2026-03-17 21:24:55,834 - INFO - ===== PIPELINE START =====
+2026-03-17 21:24:55,835 - INFO - Feature Engineering: backend/data/data_cleaning.py
+2026-03-17 21:24:55,835 - INFO - Correlation: backend/strategy/correlation.py
+2026-03-17 21:24:55,835 - INFO - Granger Test: backend/strategy/granger.py
+2026-03-17 21:24:55,835 - INFO - Signal: backend/strategy/signal.py
+2026-03-17 21:24:55,835 - INFO - Backtest Engine: backend/backtest/engine.py
+2026-03-17 21:24:55,835 - INFO - Performance: backend/backtest/performance.py
+2026-03-17 21:34:58,564 - INFO - ===== PIPELINE START =====

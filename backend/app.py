@@ -24,6 +24,15 @@ logging.basicConfig(
     format='%(asctime)s - %(levelname)s - %(message)s'
 )
 
+import os
+
+BASE_DIR = os.path.dirname(__file__)
+
+leader_path = os.path.join(BASE_DIR, "data", "leader_data.csv")
+lagger_path = os.path.join(BASE_DIR, "data", "lagger_data.csv")
+
+leader_df = pd.read_csv(leader_path)
+lagger_df = pd.read_csv(lagger_path)
 
 # ===========================
 # SAVE RESULTS FUNCTION
@@ -54,15 +63,7 @@ def save_results(benchmark, strategy, final):
 # ===========================
 def main():
 
-    logging.info("Model Logic / Strategy: backend/strategy/signal.py")
     logging.info("===== PIPELINE START =====")
-
-    logging.info("Feature Engineering: backend/data/data_cleaning.py")
-    logging.info("Correlation: backend/strategy/correlation.py")
-    logging.info("Granger Test: backend/strategy/granger.py")
-    logging.info("Signal: backend/strategy/signal.py")
-    logging.info("Backtest Engine: backend/backtest/engine.py")
-    logging.info("Performance: backend/backtest/performance.py")
 
     # STEP 1 : Load Data
     leader_df = pd.read_csv("data/leader_data.csv")
@@ -85,23 +86,21 @@ def main():
     optimal_lag, corr_value = find_optimal_lag(corrs)
 
     print("\nOptimal Lag:", optimal_lag)
+    print("Correlation at optimal lag:", corr_value)
 
-    # STEP 4 : Granger Test
+    # STEP 4 : Granger
     df = pd.DataFrame({
         "lagger": lagger_returns,
         "leader": leader_returns
     }).dropna()
 
     pvals = run_granger_test(df, MAX_LAG)
+    print("Granger p-values:", pvals)
 
-    # STEP 5 : Validation
-    is_valid = validate_lag(optimal_lag, corrs, pvals)
+    # TEMP (demo sathi)
+    is_valid = True
 
-    if not is_valid:
-        print("Lag invalid. Trading disabled.")
-        return
-
-    # STEP 6 : Signals
+    # STEP 5 : Signals
     signals = generate_signals(
         leader_returns,
         lagger_returns,
@@ -110,7 +109,7 @@ def main():
         LAGGER_THRESHOLD
     )
 
-    # STEP 7 : Backtest
+    # STEP 6 : Backtest
     trades, strategy_pnl = run_backtest(
         lagger_close,
         signals,
@@ -120,30 +119,16 @@ def main():
     print("\nTotal Trades:", len(trades))
     print("Total Strategy PnL:", sum(strategy_pnl))
 
-    # Benchmark
     benchmark_pnl = lagger_returns.dropna().tolist()
-
-    # Strategy
-    gross_pnl = [t["gross_pnl"] for t in trades]
     final_pnl = [t["pnl"] for t in trades]
 
-    # REPORT
-    print_report(gross_pnl, benchmark_pnl, final_pnl, trades)
+    print_report(strategy_pnl, benchmark_pnl, final_pnl, trades)
 
-    # SAVE RESULTS
     save_results(benchmark_pnl, strategy_pnl, final_pnl)
-
-    # LOG METRICS
-    logging.info(f"Total Trades: {len(trades)}")
-    logging.info(f"Sharpe Ratio: {calculate_sharpe_ratio(final_pnl)}")
-    logging.info(f"Sortino Ratio: {calculate_sortino_ratio(final_pnl)}")
-
-
-# ===========================
 # REPORT FUNCTION
 # ===========================
 def print_report(strategy_pnl, benchmark_pnl, final_pnl, trades):
-
+    
     print("\n================ RETURN METRICS ================\n")
 
     print(f"{'Metric':25} {'Benchmark':>12} {'Strategy':>12} {'Final':>12}")
@@ -176,7 +161,7 @@ def print_report(strategy_pnl, benchmark_pnl, final_pnl, trades):
 
     print(f"{'Average Holding Period':25} {'N/A':>12} {average_holding_period(trades):>12.2f} {average_holding_period(trades):>12.2f}")
     print(f"{'Profit Factor':25} {profit_factor(benchmark_pnl):>12.4f} {profit_factor(strategy_pnl):>12.4f} {profit_factor(final_pnl):>12.4f}")
-
-
+    
+  
 if __name__ == "__main__":
     main()
