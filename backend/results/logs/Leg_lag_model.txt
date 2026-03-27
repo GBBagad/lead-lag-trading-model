@@ -1,0 +1,218 @@
+================================================================================
+LEAD-LAG STRATEGY BACKTESTING REPORT
+====================================
+
+1. INTRODUCTION
+
+This project implements a lead-lag based quantitative trading strategy.
+The objective of the strategy is to identify whether one asset (leader)
+moves before another asset (lagger), and use this relationship to generate
+trading signals.
+
+The approach is based on statistical techniques such as correlation analysis
+and Granger causality testing. If a leading relationship is detected, signals
+are generated to take long or short positions accordingly.
+
+The strategy is evaluated using a backtesting framework to measure its
+performance across different timeframes.
+
+
+================================================================================
+2. SYSTEM ARCHITECTURE
+
+The system is modular and consists of the following components:
+
+* data/data_cleaning.py:
+  Responsible for preprocessing raw stock data, handling missing values,
+  and computing log returns.
+
+* strategy/correlation.py:
+  Computes cross-correlation between leader and lagger assets and identifies
+  the optimal lag where the relationship is strongest.
+
+* strategy/granger.py:
+  Performs Granger causality tests to statistically validate whether one
+  time series can predict another.
+
+* strategy/signal.py:
+  Generates trading signals (BUY, SELL, HOLD) based on lagged relationships.
+
+* backtest/engine.py:
+  Executes the backtesting process by simulating trades and tracking performance.
+
+* backtest/performance.py:
+  Calculates performance metrics such as returns, Sharpe ratio, drawdown, etc.
+
+This modular design ensures clear separation of concerns and easy extensibility.
+
+
+================================================================================
+2. SYSTEM ARCHITECTURE
+
+The system is modular and consists of the following components:
+
+* data/data_cleaning.py:
+  Responsible for preprocessing raw stock data, handling missing values,
+  and computing log returns.
+
+* strategy/correlation.py:
+  Computes cross-correlation between leader and lagger assets and identifies
+  the optimal lag where the relationship is strongest.
+
+* strategy/granger.py:
+  Performs Granger causality tests to statistically validate whether one
+  time series can predict another.
+
+* strategy/signal.py:
+  Generates trading signals (BUY, SELL, HOLD) based on lagged relationships.
+
+* backtest/engine.py:
+  Executes the backtesting process by simulating trades and tracking performance.
+
+* backtest/performance.py:
+  Calculates performance metrics such as returns, Sharpe ratio, drawdown, etc.
+
+This modular design ensures clear separation of concerns and easy extensibility.
+
+Results
+================================================================================
+LEAD-LAG STRATEGY BACKTESTING LOG
+Session Started: 2026-03-20 14:36:27.010063
+Log File: results/logs/backtest_log_20260320_143627.txt
+================================================================================
+
+MODEL COMPONENTS:
+Feature Engineering: data/data_cleaning.py
+Correlation: strategy/correlation.py
+Signal Generation: strategy/signal.py
+Granger Test: strategy/granger.py
+Backtesting Engine: backtest/engine.py
+Timeframe Used: 15T
+
+--------------------------------------------------
+STEP 1: DATA LOADING
+--------------------------------------------------
+
+STEP 2: RESAMPLING
+Rows: 165
+First timestamps: DatetimeIndex(['2025-01-02 05:00:00', '2025-01-03 05:00:00',
+               '2025-01-06 05:00:00', '2025-01-07 05:00:00',
+               '2025-01-08 05:00:00'],
+              dtype='datetime64[ns]', name='date', freq=None)
+
+STEP 3: CORRELATION & LAG
+Optimal Lag: 3
+Correlation: -0.19384560861323838
+Granger p-values: {1: 0.9064203250060133, 2: 0.5990077885493593, 3: 0.3309548430981849, 4: 0.33593548727389955, 5: 0.4435348939099095, 6: 0.15574668658882995, 7: 0.21963523296925044, 8: 0.3311038343002892, 9: 0.21966495250116996, 10: 0.10724506611287783}
+
+STEP 4: SIGNAL GENERATION
+Unique signals: {0, 1, -1}
+Total signals: 162
+
+STEP 5: BACKTEST
+Total Trades: 5
+Total Strategy PnL: -0.01646361073794057
+
+================ RETURN METRICS ================
+
+Metric                       Benchmark     Strategy        Final
+-----------------------------------------------------------------
+Avg Return                      0.0007      -0.0033      -0.0033
+Cumulative Return               0.1115      -0.0165      -0.0165
+Best Trade                      0.1134       0.0309       0.0309
+Worst Trade                    -0.0641      -0.0301      -0.0301
+Total PnL                       0.1115      -0.0165      -0.0165
+CAGR                            0.0931      -0.0174      -0.0174
+
+================ RISK METRICS =================
+
+Sharpe Ratio                    0.6471      -2.2748      -2.2748
+Sortino Ratio                   0.0399      -0.1658      -0.1658
+Max Drawdown                   -0.2350      -0.0396      -0.0396
+
+================ TIMING METRICS ================
+
+Avg Time to MFE                   3.00
+Avg Time to MAE                   1.67
+
+================ MODEL METRICS =================
+
+Average Holding Period            2.20
+Profit Factor                   0.6866
+
+
+================================================================================
+BACKTESTING SESSION COMPLETED
+Session Ended: 2026-03-20 14:36:27.205066
+================================================================================
+
+================================================================================
+LEAD-LAG STRATEGY BACKTESTING LOG
+Session Started: 2026-03-20 14:35:15.161087
+Log File: results/logs/backtest_log_20260320_143515.txt
+================================================================================
+
+MODEL COMPONENTS:
+Feature Engineering: data/data_cleaning.py
+Correlation: strategy/correlation.py
+Signal Generation: strategy/signal.py
+Granger Test: strategy/granger.py
+Backtesting Engine: backtest/engine.py
+Timeframe Used: 30T
+
+--------------------------------------------------
+STEP 1: DATA LOADING
+--------------------------------------------------
+
+STEP 2: RESAMPLING
+Rows: 165
+First timestamps: DatetimeIndex(['2025-01-02 05:00:00', '2025-01-03 05:00:00',
+               '2025-01-06 05:00:00', '2025-01-07 05:00:00',
+               '2025-01-08 05:00:00'],
+              dtype='datetime64[ns]', name='date', freq=None)
+
+STEP 3: CORRELATION & LAG
+Optimal Lag: 3
+Correlation: -0.19384560861323838
+Granger p-values: {1: 0.9064203250060133, 2: 0.5990077885493593, 3: 0.3309548430981849, 4: 0.33593548727389955, 5: 0.4435348939099095, 6: 0.15574668658882995, 7: 0.21963523296925044, 8: 0.3311038343002892, 9: 0.21966495250116996, 10: 0.10724506611287783}
+
+STEP 4: SIGNAL GENERATION
+Unique signals: {0, -1}
+Total signals: 162
+
+STEP 5: BACKTEST
+Total Trades: 1
+Total Strategy PnL: 0.030917089888104335
+
+================ RETURN METRICS ================
+
+Metric                       Benchmark     Strategy        Final
+-----------------------------------------------------------------
+Avg Return                      0.0007       0.0309       0.0309
+Cumulative Return               0.1115       0.0309       0.0309
+Best Trade                      0.1134       0.0309       0.0309
+Worst Trade                    -0.0641       0.0309       0.0309
+Total PnL                       0.1115       0.0309       0.0309
+CAGR                            0.0931       0.0309       0.0309
+
+================ RISK METRICS =================
+
+Sharpe Ratio                    0.6471          nan          nan
+Sortino Ratio                   0.0399       0.0000       0.0000
+Max Drawdown                   -0.2350       0.0000       0.0000
+
+================ TIMING METRICS ================
+
+Avg Time to MFE                   3.00
+Avg Time to MAE                   0.00
+
+================ MODEL METRICS =================
+
+Average Holding Period            3.00
+Profit Factor                   0.0000
+
+
+================================================================================
+BACKTESTING SESSION COMPLETED
+Session Ended: 2026-03-20 14:35:15.655301
+================================================================================

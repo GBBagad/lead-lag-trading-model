@@ -1,0 +1,70 @@
+================================================================================
+LEAD-LAG STRATEGY BACKTESTING LOG
+Session Started: 2026-03-20 14:35:15.161087
+Log File: results/logs/backtest_log_20260320_143515.txt
+================================================================================
+
+MODEL COMPONENTS:
+Feature Engineering: data/data_cleaning.py
+Correlation: strategy/correlation.py
+Signal Generation: strategy/signal.py
+Granger Test: strategy/granger.py
+Backtesting Engine: backtest/engine.py
+Timeframe Used: 30T
+
+--------------------------------------------------
+STEP 1: DATA LOADING
+--------------------------------------------------
+
+STEP 2: RESAMPLING
+Rows: 165
+First timestamps: DatetimeIndex(['2025-01-02 05:00:00', '2025-01-03 05:00:00',
+               '2025-01-06 05:00:00', '2025-01-07 05:00:00',
+               '2025-01-08 05:00:00'],
+              dtype='datetime64[ns]', name='date', freq=None)
+
+STEP 3: CORRELATION & LAG
+Optimal Lag: 3
+Correlation: -0.19384560861323838
+Granger p-values: {1: 0.9064203250060133, 2: 0.5990077885493593, 3: 0.3309548430981849, 4: 0.33593548727389955, 5: 0.4435348939099095, 6: 0.15574668658882995, 7: 0.21963523296925044, 8: 0.3311038343002892, 9: 0.21966495250116996, 10: 0.10724506611287783}
+
+STEP 4: SIGNAL GENERATION
+Unique signals: {0, -1}
+Total signals: 162
+
+STEP 5: BACKTEST
+Total Trades: 1
+Total Strategy PnL: 0.030917089888104335
+
+================ RETURN METRICS ================
+
+Metric                       Benchmark     Strategy        Final
+-----------------------------------------------------------------
+Avg Return                      0.0007       0.0309       0.0309
+Cumulative Return               0.1115       0.0309       0.0309
+Best Trade                      0.1134       0.0309       0.0309
+Worst Trade                    -0.0641       0.0309       0.0309
+Total PnL                       0.1115       0.0309       0.0309
+CAGR                            0.0931       0.0309       0.0309
+
+================ RISK METRICS =================
+
+Sharpe Ratio                    0.6471          nan          nan
+Sortino Ratio                   0.0399       0.0000       0.0000
+Max Drawdown                   -0.2350       0.0000       0.0000
+
+================ TIMING METRICS ================
+
+Avg Time to MFE                   3.00
+Avg Time to MAE                   0.00
+
+================ MODEL METRICS =================
+
+Average Holding Period            3.00
+Profit Factor                   0.0000
+
+
+================================================================================
+BACKTESTING SESSION COMPLETED
+Session Ended: 2026-03-20 14:35:15.655301
+================================================================================

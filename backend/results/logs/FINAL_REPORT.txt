@@ -1,0 +1,70 @@
+================================================================================
+FULL PIPELINE REPORT: LEAD-LAG TRADING MODEL
+Includes: Data → Correlation → Granger → Signals → Backtest → Metrics
+Session Started: 2026-03-27 21:23:59.214346
+================================================================================
+
+STEP 1: DATA LOADING
+
+STEP 2: RESAMPLING
+Rows: 165
+First timestamps: DatetimeIndex(['2025-01-02 05:00:00', '2025-01-03 05:00:00',
+               '2025-01-06 05:00:00', '2025-01-07 05:00:00',
+               '2025-01-08 05:00:00'],
+              dtype='datetime64[ns]', name='date', freq=None)
+
+STEP 3: PREPROCESSING
+Leader Returns Sample: [nan, 0.012425898668003484, 0.005744092740666969, -0.011368461698192505, 0.0014599534050094873]
+Lagger Returns Sample: [nan, 0.016232702543166916, 0.011427381043588581, -0.01800533387533403, 0.0001746809650712339]
+
+STEP 4: CORRELATION & LAG
+Optimal Lag: 3
+Correlation: -0.19384560861323838
+
+STEP 5: GRANGER CAUSALITY
+Granger p-values: {1: 0.9064203250060133, 2: 0.5990077885493593, 3: 0.3309548430981849, 4: 0.33593548727389955, 5: 0.4435348939099095, 6: 0.15574668658882995, 7: 0.21963523296925044, 8: 0.3311038343002892, 9: 0.21966495250116996, 10: 0.10724506611287783}
+Significant Lags (p < 0.05): {}
+
+STEP 6: SIGNAL GENERATION
+No significant lag found, using correlation-based lag
+Unique signals: {0, 1, -1}
+Total signals: 162
+
+STEP 7: BACKTEST
+Total Trades: 5
+Total Strategy PnL: -0.01646361073794057
+
+================ RETURN METRICS ================
+
+Metric                       Benchmark     Strategy        Final
+-----------------------------------------------------------------
+Avg Return                      0.0007      -0.0033      -0.0033
+Cumulative Return               0.1115      -0.0165      -0.0165
+Best Trade                      0.1134       0.0309       0.0309
+Worst Trade                    -0.0641      -0.0301      -0.0301
+Total PnL                       0.1115      -0.0165      -0.0165
+CAGR                            0.0931      -0.0174      -0.0174
+
+================ RISK METRICS =================
+
+Sharpe Ratio                    0.6471      -2.2748      -2.2748
+Sortino Ratio                   0.0399      -0.1658      -0.1658
+Max Drawdown                   -0.2350      -0.0396      -0.0396
+
+================ MODEL METRICS =================
+
+Average Holding Period            2.20
+Profit Factor                   0.6866
+
+
+================================================================================
+FINAL SUMMARY
+================================================================================
+Optimal Lag Used: 3
+Correlation Strength: -0.19384560861323838
+Full pipeline executed successfully.
+
+================================================================================
+BACKTESTING SESSION COMPLETED
+Session Ended: 2026-03-27 21:23:59.586687
+================================================================================

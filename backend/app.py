@@ -1,106 +1,158 @@
 from backtest.performance import *
 import pandas as pd
+import numpy as np
+
 from data.data_cleaning import compute_log_returns
 from strategy.correlation import compute_cross_correlation, find_optimal_lag
 from strategy.granger import run_granger_test
-from strategy.validation import validate_lag
 from strategy.signal import generate_signals
 from backtest.engine import run_backtest
 from strategy.parameters import *
+
 from backtest.performance import calculate_sharpe_ratio, calculate_sortino_ratio
 
 import warnings
 warnings.filterwarnings("ignore", category=FutureWarning)
 
-import logging
 import os
-
-# ensure results folder exists
-os.makedirs("results", exist_ok=True)
-
-logging.basicConfig(
-    filename='results/backtest.log',
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s'
-)
-
-import os
-
-BASE_DIR = os.path.dirname(__file__)
-
-leader_path = os.path.join(BASE_DIR, "data", "leader_data.csv")
-lagger_path = os.path.join(BASE_DIR, "data", "lagger_data.csv")
-
-leader_df = pd.read_csv(leader_path)
-lagger_df = pd.read_csv(lagger_path)
+from datetime import datetime
 
 # ===========================
-# SAVE RESULTS FUNCTION
+# SETTINGS
+# ===========================
+TIMEFRAME = '15T'
+
+# ===========================
+# PATH SETUP (FIXED)
+# ===========================
+base_dir = os.path.dirname(os.path.abspath(__file__))
+
+log_dir = os.path.join(base_dir, "results", "logs")
+os.makedirs(log_dir, exist_ok=True)
+
+log_filename = os.path.join(log_dir, "FINAL_REPORT.txt")
+
+def write_log(text):
+    print(text)
+    with open(log_filename, "a", encoding="utf-8") as f:
+        f.write(text + "\n")
+
+# ===========================
+# SAVE RESULTS CSV
 # ===========================
 def save_results(benchmark, strategy, final):
+    results_dir = os.path.join(base_dir, "results")
+    os.makedirs(results_dir, exist_ok=True)
 
-    min_len = min(len(benchmark), len(strategy), len(final))
+    pd.DataFrame({"Benchmark": benchmark}).to_csv(os.path.join(results_dir, "benchmark.csv"), index=False)
+    pd.DataFrame({"Strategy": strategy}).to_csv(os.path.join(results_dir, "strategy.csv"), index=False)
+    pd.DataFrame({"Final": final}).to_csv(os.path.join(results_dir, "final.csv"), index=False)
 
-    benchmark = benchmark[:min_len]
-    strategy = strategy[:min_len]
-    final = final[:min_len]
-
-    df = pd.DataFrame({
-        "Benchmark": benchmark,
-        "Strategy": strategy,
-        "Final": final
-    })
-
-    df.to_csv("results/backtest_results.csv", index=False)
-
-def save_results(benchmark, strategy, final):
-
-    pd.DataFrame({"Benchmark": benchmark}).to_csv("results/benchmark.csv", index=False)
-    pd.DataFrame({"Strategy": strategy}).to_csv("results/strategy.csv", index=False)
-    pd.DataFrame({"Final": final}).to_csv("results/final.csv", index=False)
 # ===========================
-# MAIN PIPELINE
+# MAIN
 # ===========================
 def main():
 
-    logging.info("===== PIPELINE START =====")
+    # reset report
+    open(log_filename, "w").close()
 
-    # STEP 1 : Load Data
-    leader_df = pd.read_csv("data/leader_data.csv")
-    lagger_df = pd.read_csv("data/lagger_data.csv")
+    print(f"\n📁 Report saved at:\n{log_filename}\n")
+
+    # HEADER
+    write_log("="*80)
+    write_log("FULL PIPELINE REPORT: LEAD-LAG TRADING MODEL")
+    write_log("Includes: Data → Correlation → Granger → Signals → Backtest → Metrics")
+    write_log(f"Session Started: {datetime.now()}")
+    write_log("="*80)
+
+    # ===========================
+    # STEP 1: DATA LOADING
+    # ===========================
+    write_log("\nSTEP 1: DATA LOADING")
+
+    leader_df = pd.read_csv(os.path.join(base_dir, "data", "leader_data.csv"))
+    lagger_df = pd.read_csv(os.path.join(base_dir, "data", "lagger_data.csv"))
+
+    time_col = leader_df.columns[0]
+
+    leader_df[time_col] = pd.to_datetime(leader_df[time_col], errors='coerce')
+    lagger_df[time_col] = pd.to_datetime(lagger_df[time_col], errors='coerce')
+
+    leader_df = leader_df.dropna(subset=[time_col])
+    lagger_df = lagger_df.dropna(subset=[time_col])
+
+    leader_df = leader_df.sort_values(by=time_col)
+    lagger_df = lagger_df.sort_values(by=time_col)
+
+    leader_df.set_index(time_col, inplace=True)
+    lagger_df.set_index(time_col, inplace=True)
+
+    # ===========================
+    # STEP 2: RESAMPLING
+    # ===========================
+    write_log("\nSTEP 2: RESAMPLING")
+
+    leader_df = leader_df.resample(TIMEFRAME).agg({"close": "last"}).dropna()
+    lagger_df = lagger_df.resample(TIMEFRAME).agg({"close": "last"}).dropna()
+
+    write_log(f"Rows: {len(leader_df)}")
+    write_log(f"First timestamps: {leader_df.index[:5]}")
 
     leader_close = leader_df["close"]
     lagger_close = lagger_df["close"]
 
-    # STEP 2 : Returns
+    # ===========================
+    # STEP 3: PREPROCESSING
+    # ===========================
+    write_log("\nSTEP 3: PREPROCESSING")
+
     leader_returns = compute_log_returns(leader_close)
     lagger_returns = compute_log_returns(lagger_close)
 
-    # STEP 3 : Correlation
-    corrs = compute_cross_correlation(
-        leader_returns,
-        lagger_returns,
-        MAX_LAG
-    )
+    write_log(f"Leader Returns Sample: {leader_returns.head().tolist()}")
+    write_log(f"Lagger Returns Sample: {lagger_returns.head().tolist()}")
 
+    # ===========================
+    # STEP 4: CORRELATION
+    # ===========================
+    write_log("\nSTEP 4: CORRELATION & LAG")
+
+    corrs = compute_cross_correlation(leader_returns, lagger_returns, MAX_LAG)
     optimal_lag, corr_value = find_optimal_lag(corrs)
 
-    print("\nOptimal Lag:", optimal_lag)
-    print("Correlation at optimal lag:", corr_value)
+    write_log(f"Optimal Lag: {optimal_lag}")
+    write_log(f"Correlation: {corr_value}")
 
-    # STEP 4 : Granger
+    # ===========================
+    # STEP 5: GRANGER
+    # ===========================
+    write_log("\nSTEP 5: GRANGER CAUSALITY")
+
     df = pd.DataFrame({
         "lagger": lagger_returns,
         "leader": leader_returns
     }).dropna()
 
     pvals = run_granger_test(df, MAX_LAG)
-    print("Granger p-values:", pvals)
+    write_log(f"Granger p-values: {pvals}")
 
-    # TEMP (demo sathi)
-    is_valid = True
+    # SIGNIFICANCE FILTER
+    ALPHA = 0.05
+    significant_lags = {k: v for k, v in pvals.items() if v < ALPHA}
 
-    # STEP 5 : Signals
+    write_log(f"Significant Lags (p < {ALPHA}): {significant_lags}")
+
+    # ===========================
+    # STEP 6: SIGNALS
+    # ===========================
+    write_log("\nSTEP 6: SIGNAL GENERATION")
+
+    if significant_lags:
+        optimal_lag = min(significant_lags, key=significant_lags.get)
+        write_log(f"Using statistically significant lag: {optimal_lag}")
+    else:
+        write_log("No significant lag found, using correlation-based lag")
+
     signals = generate_signals(
         leader_returns,
         lagger_returns,
@@ -109,59 +161,79 @@ def main():
         LAGGER_THRESHOLD
     )
 
-    # STEP 6 : Backtest
+    write_log(f"Unique signals: {set(signals)}")
+    write_log(f"Total signals: {len(signals)}")
+
+    # ===========================
+    # STEP 7: BACKTEST
+    # ===========================
+    write_log("\nSTEP 7: BACKTEST")
+
     trades, strategy_pnl = run_backtest(
         lagger_close,
         signals,
         HOLDING_PERIOD
     )
 
-    print("\nTotal Trades:", len(trades))
-    print("Total Strategy PnL:", sum(strategy_pnl))
+    write_log(f"Total Trades: {len(trades)}")
+    write_log(f"Total Strategy PnL: {sum(strategy_pnl)}")
 
+    # ===========================
+    # STEP 8: RESULTS
+    # ===========================
     benchmark_pnl = lagger_returns.dropna().tolist()
     final_pnl = [t["pnl"] for t in trades]
 
     print_report(strategy_pnl, benchmark_pnl, final_pnl, trades)
-
     save_results(benchmark_pnl, strategy_pnl, final_pnl)
-# REPORT FUNCTION
+
+    # ===========================
+    # FINAL SUMMARY
+    # ===========================
+    write_log("\n" + "="*80)
+    write_log("FINAL SUMMARY")
+    write_log("="*80)
+
+    write_log(f"Optimal Lag Used: {optimal_lag}")
+    write_log(f"Correlation Strength: {corr_value}")
+    write_log("Full pipeline executed successfully.")
+
+    write_log("\n" + "="*80)
+    write_log("BACKTESTING SESSION COMPLETED")
+    write_log(f"Session Ended: {datetime.now()}")
+    write_log("="*80)
+
+# ===========================
+# REPORT
 # ===========================
 def print_report(strategy_pnl, benchmark_pnl, final_pnl, trades):
-    
-    print("\n================ RETURN METRICS ================\n")
 
-    print(f"{'Metric':25} {'Benchmark':>12} {'Strategy':>12} {'Final':>12}")
-    print("-"*65)
+    report = ""
 
-    print(f"{'Avg Return':25} {avg_return(benchmark_pnl):>12.4f} {avg_return(strategy_pnl):>12.4f} {avg_return(final_pnl):>12.4f}")
-    print(f"{'Cumulative Return':25} {cumulative_return(benchmark_pnl):>12.4f} {cumulative_return(strategy_pnl):>12.4f} {cumulative_return(final_pnl):>12.4f}")
-    print(f"{'Best Trade':25} {best_trade(benchmark_pnl):>12.4f} {best_trade(strategy_pnl):>12.4f} {best_trade(final_pnl):>12.4f}")
-    print(f"{'Worst Trade':25} {worst_trade(benchmark_pnl):>12.4f} {worst_trade(strategy_pnl):>12.4f} {worst_trade(final_pnl):>12.4f}")
-    print(f"{'Total PnL':25} {total_pnl(benchmark_pnl):>12.4f} {total_pnl(strategy_pnl):>12.4f} {total_pnl(final_pnl):>12.4f}")
-    print(f"{'CAGR':25} {calculate_cagr(benchmark_pnl):>12.4f} {calculate_cagr(strategy_pnl):>12.4f} {calculate_cagr(final_pnl):>12.4f}")
+    report += "\n================ RETURN METRICS ================\n\n"
+    report += f"{'Metric':25} {'Benchmark':>12} {'Strategy':>12} {'Final':>12}\n"
+    report += "-"*65 + "\n"
 
-    print("\n================ RISK METRICS =================\n")
+    report += f"{'Avg Return':25} {avg_return(benchmark_pnl):>12.4f} {avg_return(strategy_pnl):>12.4f} {avg_return(final_pnl):>12.4f}\n"
+    report += f"{'Cumulative Return':25} {cumulative_return(benchmark_pnl):>12.4f} {cumulative_return(strategy_pnl):>12.4f} {cumulative_return(final_pnl):>12.4f}\n"
+    report += f"{'Best Trade':25} {best_trade(benchmark_pnl):>12.4f} {best_trade(strategy_pnl):>12.4f} {best_trade(final_pnl):>12.4f}\n"
+    report += f"{'Worst Trade':25} {worst_trade(benchmark_pnl):>12.4f} {worst_trade(strategy_pnl):>12.4f} {worst_trade(final_pnl):>12.4f}\n"
+    report += f"{'Total PnL':25} {total_pnl(benchmark_pnl):>12.4f} {total_pnl(strategy_pnl):>12.4f} {total_pnl(final_pnl):>12.4f}\n"
+    report += f"{'CAGR':25} {calculate_cagr(benchmark_pnl):>12.4f} {calculate_cagr(strategy_pnl):>12.4f} {calculate_cagr(final_pnl):>12.4f}\n"
 
-    print(f"{'Sharpe Ratio':25} {calculate_sharpe_ratio(benchmark_pnl):>12.4f} {calculate_sharpe_ratio(strategy_pnl):>12.4f} {calculate_sharpe_ratio(final_pnl):>12.4f}")
-    print(f"{'Sortino Ratio':25} {calculate_sortino_ratio(benchmark_pnl):>12.4f} {calculate_sortino_ratio(strategy_pnl):>12.4f} {calculate_sortino_ratio(final_pnl):>12.4f}")
-    print(f"{'Max Drawdown':25} {calculate_max_drawdown(benchmark_pnl):>12.4f} {calculate_max_drawdown(strategy_pnl):>12.4f} {calculate_max_drawdown(final_pnl):>12.4f}")
-    print(f"{'Volatility':25} {calculate_volatility(benchmark_pnl):>12.4f} {calculate_volatility(strategy_pnl):>12.4f} {calculate_volatility(final_pnl):>12.4f}")
-    print(f"{'Win Rate':25} {calculate_win_rate(benchmark_pnl):>12.4f} {calculate_win_rate(strategy_pnl):>12.4f} {calculate_win_rate(final_pnl):>12.4f}")
-    print(f"{'Win/Loss Ratio':25} {win_loss_ratio(benchmark_pnl):>12.4f} {win_loss_ratio(strategy_pnl):>12.4f} {win_loss_ratio(final_pnl):>12.4f}")
-    print(f"{'Avg Win':25} {avg_win(benchmark_pnl):>12.4f} {avg_win(strategy_pnl):>12.4f} {avg_win(final_pnl):>12.4f}")
-    print(f"{'Avg Loss':25} {avg_loss(benchmark_pnl):>12.4f} {avg_loss(strategy_pnl):>12.4f} {avg_loss(final_pnl):>12.4f}")
+    report += "\n================ RISK METRICS =================\n\n"
+    report += f"{'Sharpe Ratio':25} {calculate_sharpe_ratio(benchmark_pnl):>12.4f} {calculate_sharpe_ratio(strategy_pnl):>12.4f} {calculate_sharpe_ratio(final_pnl):>12.4f}\n"
+    report += f"{'Sortino Ratio':25} {calculate_sortino_ratio(benchmark_pnl):>12.4f} {calculate_sortino_ratio(strategy_pnl):>12.4f} {calculate_sortino_ratio(final_pnl):>12.4f}\n"
+    report += f"{'Max Drawdown':25} {calculate_max_drawdown(benchmark_pnl):>12.4f} {calculate_max_drawdown(strategy_pnl):>12.4f} {calculate_max_drawdown(final_pnl):>12.4f}\n"
 
-    print("\n================ TIMING METRICS ================\n")
+    report += "\n================ MODEL METRICS =================\n\n"
+    report += f"{'Average Holding Period':25} {average_holding_period(trades):>12.2f}\n"
+    report += f"{'Profit Factor':25} {profit_factor(strategy_pnl):>12.4f}\n"
 
-    print(f"{'Avg Time to MFE':25} {avg_time_to_mfe(trades):>12.2f} {avg_time_to_mfe(trades):>12.2f} {avg_time_to_mfe(trades):>12.2f}")
-    print(f"{'Avg Time to MAE':25} {avg_time_to_mae(trades):>12.2f} {avg_time_to_mae(trades):>12.2f} {avg_time_to_mae(trades):>12.2f}")
+    write_log(report)
 
-    print("\n================ MODEL METRICS =================\n")
-
-    print(f"{'Average Holding Period':25} {'N/A':>12} {average_holding_period(trades):>12.2f} {average_holding_period(trades):>12.2f}")
-    print(f"{'Profit Factor':25} {profit_factor(benchmark_pnl):>12.4f} {profit_factor(strategy_pnl):>12.4f} {profit_factor(final_pnl):>12.4f}")
-    
-  
+# ===========================
+# RUN
+# ===========================
 if __name__ == "__main__":
     main()

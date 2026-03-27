@@ -1,3 +1,4 @@
+
 # backend/strategy/correlation.py
 
 import numpy as np
@@ -18,4 +19,3 @@ def find_optimal_lag(correlations):
     # absolute max correlation lag
     optimal_lag = max(correlations, key=lambda k: abs(correlations[k]))
     return optimal_lag, correlations[optimal_lag]
-
