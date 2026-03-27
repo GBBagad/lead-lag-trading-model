@@ -1,7 +1,7 @@
 ================================================================================
 FULL PIPELINE REPORT: LEAD-LAG TRADING MODEL
 Includes: Data → Correlation → Granger → Signals → Backtest → Metrics
-Session Started: 2026-03-27 21:23:59.214346
+Session Started: 2026-03-27 22:10:28.489644
 ================================================================================
 
 STEP 1: DATA LOADING
@@ -66,5 +66,5 @@ Full pipeline executed successfully.
 
 ================================================================================
 BACKTESTING SESSION COMPLETED
-Session Ended: 2026-03-27 21:23:59.586687
+Session Ended: 2026-03-27 22:10:31.122637
 ================================================================================
